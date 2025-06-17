@@ -1,0 +1,18 @@
+version: 0.2
+
+phases:
+  install:
+    commands:
+      - echo Installing kubectl...
+      - curl -LO https://dl.k8s.io/release/$(curl -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl
+      - install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+      - echo Configuring kubeconfig...
+      - aws eks update-kubeconfig --region us-east-1 --name <your-eks-cluster-name>
+
+  build:
+    commands:
+      - echo Applying Kubernetes manifests...
+      - kubectl apply -f k8s-out/Database/
+      - kubectl apply -f k8s-out/Backend/
+      - kubectl apply -f k8s-out/Frontend/
+      - kubectl apply -f k8s-out/ingress.yaml
