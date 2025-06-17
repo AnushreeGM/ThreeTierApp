@@ -2,23 +2,28 @@ version: 0.2
 
 phases:
   install:
+    runtime-versions:
+      python: 3.11
     commands:
-      - echo Installing kubectl...
-      - curl -LO "https://dl.k8s.io/release/v1.30.1/bin/linux/amd64/kubectl"
-      - chmod +x kubectl
-      - mv kubectl /usr/local/bin/
+      - echo Installing kubectl and aws-iam-authenticator...
+      - curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+      - chmod +x kubectl && mv kubectl /usr/local/bin/
 
-      - echo Setting kubeconfig path...
+      - echo Installing AWS CLI v2...
+      - curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+      - unzip -q awscliv2.zip && ./aws/install
+
+      - echo Setting up kubeconfig...
+      - export AWS_REGION=us-east-1
+      - export CLUSTER_NAME=three-tier-cluster
       - export KUBECONFIG=/root/.kube/config
       - mkdir -p $(dirname $KUBECONFIG)
-
-      - echo Updating kubeconfig for EKS cluster...
-      - aws eks update-kubeconfig --region us-east-1 --name three-tier-cluster
+      - aws eks update-kubeconfig --region $AWS_REGION --name $CLUSTER_NAME
 
   build:
     commands:
-      - echo Testing cluster access...
-      - kubectl get nodes || echo "Failed to connect to cluster"
+      - echo Verifying access to cluster...
+      - kubectl get nodes
 
       - echo Applying Kubernetes manifests...
       - kubectl apply -f Kubernetes-Manifests-file/Database/
