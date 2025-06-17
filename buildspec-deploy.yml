@@ -13,7 +13,7 @@ phases:
   build:
     commands:
       - echo Applying Kubernetes manifests...
-      - kubectl apply -f k8s-out/Database/
-      - kubectl apply -f k8s-out/Backend/
-      - kubectl apply -f k8s-out/Frontend/
-      - kubectl apply -f k8s-out/ingress.yaml
+      - kubectl apply -f Kubernetes-Manifests-file/Database/
+      - kubectl apply -f Kubernetes-Manifests-file/Backend/
+      - kubectl apply -f Kubernetes-Manifests-file/Frontend/
+      - kubectl apply -f Kubernetes-Manifests-file/ingress.yaml
