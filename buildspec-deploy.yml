@@ -5,13 +5,13 @@ phases:
     runtime-versions:
       python: 3.11
     commands:
-      - echo Installing kubectl and aws-iam-authenticator...
-      - curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+      - echo Installing kubectl...
+      - curl -LO "https://dl.k8s.io/release/$(curl -Ls https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
       - chmod +x kubectl && mv kubectl /usr/local/bin/
 
-      - echo Installing AWS CLI v2...
+      - echo Updating AWS CLI to v2 if already present...
       - curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-      - unzip -q awscliv2.zip && ./aws/install
+      - unzip -q awscliv2.zip && ./aws/install --update
 
       - echo Setting up kubeconfig...
       - export AWS_REGION=us-east-1
