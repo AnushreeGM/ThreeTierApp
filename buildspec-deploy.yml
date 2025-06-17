@@ -9,16 +9,17 @@ phases:
       - curl -LO "https://dl.k8s.io/release/$(curl -Ls https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
       - chmod +x kubectl && mv kubectl /usr/local/bin/
 
-      - echo Updating AWS CLI to v2 if already present...
+      - echo Updating AWS CLI to v2...
       - curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
       - unzip -q awscliv2.zip && ./aws/install --update
 
       - echo Setting up kubeconfig...
       - export AWS_REGION=us-east-1
       - export CLUSTER_NAME=three-tier-cluster
-      - export KUBECONFIG=/root/.kube/config
-      - mkdir -p $(dirname $KUBECONFIG)
       - aws eks update-kubeconfig --region $AWS_REGION --name $CLUSTER_NAME
+      - export KUBECONFIG=/root/.kube/config
+      - export TOKEN=$(aws eks get-token --region $AWS_REGION --cluster-name $CLUSTER_NAME --output text --query 'status.token')
+      - kubectl config set-credentials arn:aws:eks:$AWS_REGION:545009829015:cluster/$CLUSTER_NAME --token="$TOKEN"
 
   build:
     commands:
